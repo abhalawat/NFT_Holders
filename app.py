@@ -30,7 +30,7 @@ latest = web3.eth.blockNumber
 #print(blockDetails.args.to)
 #print("*******************************************************************************")
 
-transferEvents = contract.events.Transfer.createFilter(fromBlock=14000000, toBlock=latest)
+transferEvents = contract.events.Transfer.createFilter(fromBlock=12287507, toBlock=latest)
 #print(transferEvents.get_all_entries())
 print("-----------------------------------------------------------------------------------")
 for i in range(len(transferEvents.get_all_entries())):
