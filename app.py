@@ -4,7 +4,13 @@ from time import sleep
 from unicodedata import name
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
+import pymongo
+from pymongo import MongoClient
 
+cluster = MongoClient("mongodb://127.0.0.1:27017")
+
+db = cluster['Holders']
+collection = db['holders']
 infura_url = "https://mainnet.infura.io/v3/57d8e5ec16764a3e86ce18fc505e640e"
 web3 = Web3(Web3.HTTPProvider(infura_url))
 web3.middleware_onion.inject(geth_poa_middleware, layer=0)  #  Inject poa middleware 
@@ -24,11 +30,13 @@ latest = web3.eth.blockNumber
 #print(blockDetails.args.to)
 #print("*******************************************************************************")
 
-#transferEvents = contract.events.Transfer.createFilter(fromBlock=latest-100, toBlock=latest)
 transferEvents = contract.events.Transfer.createFilter(fromBlock=14000000, toBlock=latest)
-print(transferEvents.get_all_entries())
+#print(transferEvents.get_all_entries())
 print("-----------------------------------------------------------------------------------")
 for i in range(len(transferEvents.get_all_entries())):
     addressTo = transferEvents.get_all_entries()[i].args.to
     print(addressTo)
+    collection.insert_one({"_id": i,"Holder":addressTo})
     #print("Balance", web3.eth.get_balance(addressTo))
+
+
