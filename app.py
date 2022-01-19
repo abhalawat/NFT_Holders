@@ -1,3 +1,4 @@
+from distutils.log import error
 import json
 from mimetypes import init
 import time
@@ -9,6 +10,7 @@ from web3.middleware import geth_poa_middleware
 import pymongo
 from pymongo import MongoClient
 
+#cluster = MongoClient("mongodb+srv://abhalawat:abhalawat@cluster0.4bkwk.mongodb.net/Holders?retryWrites=true&w=majority")
 cluster = MongoClient("mongodb://127.0.0.1:27017")
 
 db = cluster['Holders']
@@ -27,27 +29,32 @@ print(name)
 
 
 def holdersEvent(_fromBlock, _toBlock):
-    transferEvents = contract.events.Transfer.createFilter(fromBlock=_fromBlock, toBlock=_toBlock)
-    for i in range(len(transferEvents.get_all_entries())):
-        addressTo = transferEvents.get_all_entries()[i].args.to
-        print(addressTo)
+    try:
+        transferEvents = contract.events.Transfer.createFilter(fromBlock=_fromBlock, toBlock=_toBlock)
+        for i in range(len(transferEvents.get_all_entries())):
+            addressTo = transferEvents.get_all_entries()[i].args.to
+            print(addressTo)
+    except error:
+        #holdersEvent(_fromBlock, _toBlock)
+        print(_fromBlock," ",_toBlock)
+
 
 latest = web3.eth.blockNumber
 firstBlock = web3.eth.getTransactionReceipt(tx_hash).blockNumber
 totalResult = latest - firstBlock
 
 initial = firstBlock
-if totalResult >10000:
-    while totalResult>=10000:
+if totalResult >2000:
+    while totalResult>=2000:
         fromBlock = initial
-        toBlock = initial +10000
+        toBlock = initial +2000
         holdersEvent(fromBlock,toBlock)
-        totalResult = totalResult -10000
+        totalResult = totalResult -2000
         initial = toBlock
     if totalResult != 0:
         fromBlock = initial
         toBlock = initial + totalResult
-        holdersEvent(fromBlock,toBLock)
+        holdersEvent(fromBlock,toBlock)
 else:
     holdersEvent(firstBlock,latest)
 
