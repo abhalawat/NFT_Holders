@@ -1,0 +1,25 @@
+{
+    "NFTHolders":[
+        {
+            "address": "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+            "tx_hash":"0x22199329b0aa1aa68902a78e3b32ca327c872fab166c7a2838273de6ad383eba"
+        },
+        {
+            "address": "0xED5AF388653567Af2F388E6224dC7C4b3241C544",
+            "tx_hash":"0x1c2d63247c36a617775c435a917770dfe62379064deaa1ab7f85e651a92f578e"
+        },
+        {
+            "address": "0xe785E82358879F061BC3dcAC6f0444462D4b5330",
+            "tx_hash":"0x97bba855f34bf77113c77bf89ccf19f399c22e819dd0ade762391805cf9e24c7"
+        },
+        {
+            "address": "0x60E4d786628Fea6478F785A6d7e704777c86a7c6",
+            "tx_hash":"0x025f185262da3c52bf9b87f09a1fea815a27fd8c32a363da72cac0c9cae27436"
+        },
+        {
+            "address": "0x6FD053BfF10512d743Fa36C859e49351a4920df6",
+            "tx_hash":"0x692d8b7578cefcc539defc40eebd80ce6292258329c6641aea4008c1882d5e49"
+        }
+        
+    ]
+}
