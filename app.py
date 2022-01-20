@@ -10,6 +10,7 @@ from web3.middleware import geth_poa_middleware
 import pymongo
 from pymongo import MongoClient
 import asyncio
+from multiprocessing import Process
 
 cluster = MongoClient("mongodb://127.0.0.1:27017")
 
@@ -35,34 +36,46 @@ def holdersEvent(_fromBlock, _toBlock,contract,address):
     except asyncio.TimeoutError: 
         pass
     
-def holdersContract():
+def holdersContract(address, tx_hash):
+    count = 0
+    abi = json.load(open('abi{0}.json'.format(count),'r'))
+    print("process")
+    contract = web3.eth.contract(address=address,abi=abi)
+    latest = web3.eth.blockNumber
+    firstBlock = web3.eth.getTransactionReceipt(tx_hash).blockNumber
+    totalResult = latest - firstBlock
+
+    initial = firstBlock
+    if totalResult >2000:
+        while totalResult>=2000:
+            fromBlock = initial
+            toBlock = initial +2000
+            holdersEvent(fromBlock,toBlock,contract,address)
+            totalResult = totalResult -2000
+            initial = toBlock
+        if totalResult != 0:
+            fromBlock = initial
+            toBlock = initial + totalResult
+            holdersEvent(fromBlock,toBlock,contract,address)
+    else:
+        holdersEvent(firstBlock,latest,contract,address)
+    count = count +1
+
+if __name__=="__main__":
+    addresses = []
+    tx_hashes = []
+    processes = []
     for i in range(len(data)):
         address= data[i]["address"]
         tx_hash = data[i]['tx_hash']
-        abi = json.load(open('abi{0}.json'.format(i),'r'))
-        contract = web3.eth.contract(address=address,abi=abi)
-        latest = web3.eth.blockNumber
-        firstBlock = web3.eth.getTransactionReceipt(tx_hash).blockNumber
-        totalResult = latest - firstBlock
-
-        initial = firstBlock
-        if totalResult >2000:
-            while totalResult>=2000:
-                fromBlock = initial
-                toBlock = initial +2000
-                holdersEvent(fromBlock,toBlock,contract,address)
-                totalResult = totalResult -2000
-                initial = toBlock
-            if totalResult != 0:
-                fromBlock = initial
-                toBlock = initial + totalResult
-                holdersEvent(fromBlock,toBlock,contract,address)
-        else:
-            holdersEvent(firstBlock,latest,contract,address)
-
-if __name__=="__main__":
-    holdersContract()
-
-
-
-
+        #abi = json.load(open('abi{0}.json'.format(i),'r'))
+        addresses.append(address)
+        tx_hashes.append(tx_hash)
+        #abis.append(abi)
+        process=Process(target=holdersContract, args=(address,tx_hash))
+        processes.append(process)
+    for process in processes:
+        process.start()
+    for process in processes:
+        process.join()
+        
